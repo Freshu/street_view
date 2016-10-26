@@ -16,9 +16,10 @@ pip install <nazwa_pliku>
 Jak zainstalowaæ Panda3D?
 
 1. Œci¹gamy i instalujemy SDK 1.9.2 w dowonlym miejscu. 
-https://www.panda3d.org/download.php?sdk
+Z tej strony https://www.panda3d.org/download.php?platform=windows&version=devel&sdk
+œci¹gamy Panda3D-SDK-1.10.0pre-3eed7bc-py3.5.exe pod Pythona 3.5
 
 2. W miejscu gdzie mamy zainstalowanego Pythona + '\Lib\site-packages' tworzymy plik panda.pth
 W œrodku wpisujemy 2 linijki ze œcie¿kami do naszej Pandy3D np.:
-C:\Panda3D-1.9.2-x64
-C:\Panda3D-1.9.2-x64\bin
+C:\Panda3D-1.10.0
+C:\Panda3D-1.10.0\bin
