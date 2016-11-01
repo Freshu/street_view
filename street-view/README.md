@@ -1,25 +1,28 @@
-# Wymaga OpenCV 3.1.0 i Pythona 3.5.2
+# Wymaga Pythona 3.5.2, OpenCV 3.1.0 i Panda3D 1.9.2
 
-Jak zainstalowaæ OpenCV?
+----
+## Jak zainstalowaæ OpenCV?
 
-1. Œci¹gamy jedn¹ z tych wersji .whl z bibliotek¹: http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv
+1. Œci¹gamy jedn¹ z [tych](http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv) wersji .whl z bibliotek¹: 
 
-a) opencv_python-3.1.0+contrib_opencl-cp35-cp35m-win32.whl
-b) opencv_python-3.1.0+contrib_opencl-cp35-cp35m-win_amd64.whl
+    opencv_python-3.1.0+contrib_opencl-cp35-cp35m-win32.whl
+    opencv_python-3.1.0+contrib_opencl-cp35-cp35m-win_amd64.whl
 
 2. Wchodzimy do naszego pythonowego folderu z pipem(Python3\Scripts) i wrzucamy tam pliki .whl .
 
 3. Otwieramy konsolê i wpisujemy:
-pip install <nazwa_pliku>
+    pip install <nazwa_pliku>
 
-
-Jak zainstalowaæ Panda3D?
+----
+## Jak zainstalowaæ Panda3D?
 
 1. Œci¹gamy i instalujemy SDK 1.9.2 w dowonlym miejscu. 
-Z tej strony https://www.panda3d.org/download.php?platform=windows&version=devel&sdk
+Ze [strony](https://www.panda3d.org/download.php?platform=windows&version=devel&sdk)
 œci¹gamy Panda3D-SDK-1.10.0pre-3eed7bc-py3.5.exe pod Pythona 3.5
 
-2. W miejscu gdzie mamy zainstalowanego Pythona + '\Lib\site-packages' tworzymy plik panda.pth
-W œrodku wpisujemy 2 linijki ze œcie¿kami do naszej Pandy3D np.:
-C:\Panda3D-1.10.0
-C:\Panda3D-1.10.0\bin
+2. W miejscu gdzie mamy zainstalowanego Pythona + '\Lib\site-packages' tworzymy plik panda.pth . W œrodku wpisujemy 2 linijki ze œcie¿kami do naszej Pandy3D.
+
+Przyk³adowy plik panda.pth :
+
+    C:\Panda3D-1.10.0
+    C:\Panda3D-1.10.0\bin
