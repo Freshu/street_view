@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import math
 
 from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.ShowBase import ShowBase
@@ -10,7 +11,6 @@ from panda3d.core import LPoint3, LVector3
 from panda3d.core import TextNode
 from panda3d.core import WindowProperties
 from panda3d.core import loadPrcFileData
-
 
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
@@ -45,9 +45,9 @@ class StreetView(ShowBase):
 
         ShowBase.__init__(self)
 
-        self.camera_z = 60
-        self.camera_default_z = 60
-        self.level_height = 60
+        self.camera_z = 100
+        self.camera_default_z = 100
+        self.level_height = 100
         self.level_number = 1
 
         # Post the instructions
@@ -67,25 +67,61 @@ class StreetView(ShowBase):
         self.axes.setPos(0, 0.1, 0)
 
         self.number_of_points = 5
+        # for i in range(1, self.number_of_points + 1, 1):
+        #     positions = [(0, 0, self.level_height * i), (30, 0, self.level_height*i), (60, 0, self.level_height*i)]
+        #     index = 0
+        #     # positions = [(0, 0, self.level_height * i), (0, 60, self.level_height * i), (60, 120, self.level_height * i)]
+        #     photo_numbers = [1, 2, 3]
+        #     for position_vector in positions:
+        #         # myTexture = self.loader.loadTexture("images/img" + str(number_of_photo) + ".jpg")
+        #         myTexture = self.loader.loadTexture("images/out" + str(3-index%2) + ".jpg")
+        #         index += 1
+        #         self.wall = self.loader.loadModel('models/Square.egg')
+        #         self.wall.reparentTo(self.render)
+        #         self.wall.setTexture(myTexture)
+        #         # self.wall.setScale(10, 10, 10)
+        #         self.wall.setScale(10,10,10)
+        #         self.wall.setPos(position_vector)
         for i in range(1, self.number_of_points + 1, 1):
-            positions = [(0, 0, self.level_height * i), (0, 60, self.level_height * i),
-                         (60, 120, self.level_height * i)]
-            photo_numbers = [1, 2, 3]
-            for position_vector in positions:
-                # myTexture = self.loader.loadTexture("images/img" + str(number_of_photo) + ".jpg")
-                myTexture = self.loader.loadTexture("images/img" + str(3) + ".jpg")
-                self.wall2 = self.loader.loadModel('models/Square.egg')
-                self.wall2.reparentTo(self.render)
-                self.wall2.setTexture(myTexture)
-                self.wall2.setScale(10, 10, 10)
-                self.wall2.setPos(position_vector)
+            # obrót obrazka wokół osi Z
+            # self.wall.setHpr(kąt_obrotu,0,0)
+            walls_number = 18
+            szerokosc = 32.75
+            kat = 360/walls_number
+            katRad = math.radians(kat)
+            R = szerokosc/(2*math.tan(katRad/2))
+
+            # for j in range(walls_number, 0, -1):
+            #     myTexture = self.loader.loadTexture("sklejanie/images/stiched/" + str(j) + ".jpg")
+            #     self.wall = self.loader.loadModel('models/Square.egg')
+            #     self.wall.reparentTo(self.render)
+            #     self.wall.setTexture(myTexture)
+            #     # self.wall.setScale(10, 10, 10)
+            #     self.wall.setScale(10, 10, 10)
+
+            for j in range(1, walls_number+1, 1):
+                myTexture = self.loader.loadTexture("sklejanie/images/stiched/" + str(j) + ".jpg")
+                self.wall = self.loader.loadModel('models/Square.egg')
+                self.wall.reparentTo(self.render)
+                self.wall.setTexture(myTexture)
+                # self.wall.setScale(10, 10, 10)
+                self.wall.setScale(10, 10, 10)
+
+                angle = j*kat
+                angleRad = math.radians(-angle)
+                x = R*math.cos(angleRad)
+                y = R*math.sin(angleRad)
+
+                #self.wall.setPos(szerokosc - (1 - math.cos(katRad)) * szerokosc / 2, math.sin(katRad) * szerokosc / 2, self.level_height * i)
+                self.wall.setPos(x, y, self.level_height * i)
+                self.wall.setHpr(90-angle, 0, 0)
+
+
 
         # Rozmiar ściany to (1x0x1) * skala
 
-
-
-        # self.wall2.reparentTo(self.render)
-        # self.wall2.setScale(5, 5, 5)
+        # self.wall.reparentTo(self.render)
+        # self.wall.setScale(5, 5, 5)
 
         # Make the mouse invisible, turn off normal mouse controls
         self.disableMouse()
@@ -96,7 +132,7 @@ class StreetView(ShowBase):
         self.camLens.setFov(60)
 
         # Set the current viewing target
-        self.focus = LVector3(0, 50, 0)  # First camera position
+        self.focus = LVector3(0, 0, 0)  # First camera position
         self.heading = 180
         self.pitch = 0
         self.mousex = 0
@@ -112,12 +148,16 @@ class StreetView(ShowBase):
         taskMgr.add(self.controlCamera, "camera-task")
         self.changeCameraPos(-1)
         self.accept("escape", sys.exit, [0])
+
+        # DO USUNIECIA
         self.accept("mouse1", self.setMouseBtn, [0, 1])
         self.accept("mouse1-up", self.setMouseBtn, [0, 0])
         self.accept("mouse2", self.setMouseBtn, [1, 1])
         self.accept("mouse2-up", self.setMouseBtn, [1, 0])
         self.accept("mouse3", self.setMouseBtn, [2, 1])
         self.accept("mouse3-up", self.setMouseBtn, [2, 0])
+        #####
+
         self.accept("arrow_left", self.rotateCam, [-1])
         self.accept("arrow_right", self.rotateCam, [1])
         self.accept("1-up", self.changeCameraPos, [-1])
@@ -148,17 +188,18 @@ class StreetView(ShowBase):
 
     def changeCameraPos(self, up_or_down):
         if self.camera_z == self.camera_default_z and up_or_down == -1:
-            self.focus = LVector3(0, 50, self.camera_z)
+            self.focus = LVector3(0, 0, self.camera_z)
             return
         if self.camera_z == self.level_height * self.number_of_points and up_or_down == 1:
-            self.focus = LVector3(0, 50, self.camera_z)
+            self.focus = LVector3(0, 0, self.camera_z)
             return
         self.camera_z += up_or_down * self.level_height
         self.level_number += up_or_down
-        self.focus = LVector3(0, 50, self.camera_z)
+        self.focus = LVector3(0, 0, self.camera_z)
         self.inst4.setText("Numer punktu: " + str(self.level_number))
 
     def controlCamera(self, task):
+        # DO USUNIECIA
         # figure out how much the mouse has moved (in pixels)
         md = self.win.getPointer(0)
         x = md.getX()
@@ -166,8 +207,10 @@ class StreetView(ShowBase):
         if self.win.movePointer(0, 100, 100):
             self.heading = self.heading - (x - 100) * 0.2
             self.pitch = self.pitch - (y - 100) * 0.2
+        #######
+
         self.camera.setHpr(self.heading, self.pitch, 0)
-        # self.wall.setHpr(self.h, self.p, self.r) # Rotating walls
+        self.wall.setHpr(self.h, self.p, self.r) # Rotating walls
         dir = self.camera.getMat().getRow3(1)
         elapsed = task.time - self.last
         if self.last == 0:

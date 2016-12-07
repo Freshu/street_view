@@ -2,6 +2,7 @@
 import numpy as np
 import imutils
 import cv2
+import math
 
 
 class Stitcher:
@@ -21,30 +22,26 @@ class Stitcher:
         M = self.matchKeypoints(kpsA, kpsB,
                                 featuresA, featuresB, ratio, reprojThresh)
 
-        print(max(kpsA[:,0]))
-        print(max(kpsA[:,1]))
         # if the match is None, then there aren't enough matched
         # keypoints to create a panorama
         if M is None:
-            return None
+            return None, None, None, None
 
         # otherwise, apply a perspective warp to stitch the images
         # together
         (matches, H, status) = M
-
         result = cv2.warpPerspective(imageA, H,
                                      (imageA.shape[1] + imageB.shape[1], imageA.shape[0]))
         result[0:imageB.shape[0], 0:imageB.shape[1]] = imageB
-        # result = result[:, imageB.shape[1]:]
 
         # check to see if the keypoint matches should be visualized
         if showMatches:
-            vis = self.drawMatches(imageA, imageB, kpsA, kpsB, matches,
+            vis, ptA, ptB = self.drawMatches(imageA, imageB, kpsA, kpsB, matches,
                                    status)
 
             # return a tuple of the stitched image and the
             # visualization
-            return (result, vis)
+            return (result, vis, ptA, ptB)
 
         # return the stitched image
         return result
@@ -116,6 +113,9 @@ class Stitcher:
         vis[0:hA, 0:wA] = imageA
         vis[0:hB, wA:] = imageB
 
+        dist = []
+        distx = []
+        disty = []
         # loop over the matches
         for ((trainIdx, queryIdx), s) in zip(matches, status):
             # only process the match if the keypoint was successfully
@@ -124,7 +124,20 @@ class Stitcher:
                 # draw the match
                 ptA = (int(kpsA[queryIdx][0]), int(kpsA[queryIdx][1]))
                 ptB = (int(kpsB[trainIdx][0]) + wA, int(kpsB[trainIdx][1]))
-                cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
+                print(ptA, ptB)
+                #cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
+                dist.append(self.distance(ptA, ptB))
+                distx.append((ptA[1] - ptB[1]))
+                disty.append(abs(ptA[0] - ptB[0]))
 
         # return the visualization
-        return vis
+        print("Liczba punktów:", len(dist))
+        dist = round(sum(dist) / len(dist))
+        distx = round(sum(distx)/len(distx))
+        disty = round(sum(disty)/len(disty))
+        # print(ptA, ptB, dist, distx, disty)
+        cv2.line(vis, ptA, ptB, (0, 0, 255), 1)
+        return vis, ptA,ptB
+
+    def distance(self, ptA, ptB):
+        return math.sqrt((ptA[0] - ptB[0])**2 + (ptA[1] - ptB[1])**2)
